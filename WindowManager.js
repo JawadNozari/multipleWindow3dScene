@@ -8,55 +8,52 @@ class WindowManager
 	#winChangeCallback;
 	
 	constructor ()
-	{
-		let that = this;
+	{;
 
 		// event listener for when localStorage is changed from another window
 		addEventListener("storage", (event) => 
 		{
-			if (event.key == "windows")
+			if (event.key === "windows")
 			{
-				let newWindows = JSON.parse(event.newValue);
-				let winChange = that.#didWindowsChange(that.#windows, newWindows);
+				const newWindows = JSON.parse(event.newValue);
+				const winChange = this.#didWindowsChange(this.#windows, newWindows);
 
-				that.#windows = newWindows;
+				this.#windows = newWindows;
 
 				if (winChange)
 				{
-					if (that.#winChangeCallback) that.#winChangeCallback();
+					if (this.#winChangeCallback) this.#winChangeCallback();
 				}
 			}
 		});
 
 		// event listener for when current window is about to ble closed
-		window.addEventListener('beforeunload', function (e) 
+		window.addEventListener('beforeunload', (e) => 
 		{
-			let index = that.getWindowIndexFromId(that.#id);
+			const index = this.getWindowIndexFromId(this.#id);
 
 			//remove this window from the list and update local storage
-			that.#windows.splice(index, 1);
-			that.updateWindowsLocalStorage();
+			this.#windows.splice(index, 1);
+			this.updateWindowsLocalStorage();
 		});
 	}
 
 	// check if theres any changes to the window list
 	#didWindowsChange (pWins, nWins)
 	{
-		if (pWins.length != nWins.length)
+		if (pWins.length !== nWins.length)
 		{
 			return true;
 		}
-		else
-		{
+		
 			let c = false;
 
 			for (let i = 0; i < pWins.length; i++)
 			{
-				if (pWins[i].id != nWins[i].id) c = true;
+				if (pWins[i].id !== nWins[i].id) c = true;
 			}
 
 			return c;
-		}
 	}
 
 	// initiate current window (add metadata for custom data to store with each window instance)
@@ -67,7 +64,7 @@ class WindowManager
 		this.#count++;
 
 		this.#id = this.#count;
-		let shape = this.getWinShape();
+		const shape = this.getWinShape();
 		this.#winData = {id: this.#id, shape: shape, metaData: metaData};
 		this.#windows.push(this.#winData);
 
@@ -77,7 +74,7 @@ class WindowManager
 
 	getWinShape ()
 	{
-		let shape = {x: window.screenLeft, y: window.screenTop, w: window.innerWidth, h: window.innerHeight};
+		const shape = {x: window.screenLeft, y: window.screenTop, w: window.innerWidth, h: window.innerHeight};
 		return shape;
 	}
 
@@ -87,7 +84,7 @@ class WindowManager
 
 		for (let i = 0; i < this.#windows.length; i++)
 		{
-			if (this.#windows[i].id == id) index = i;
+			if (this.#windows[i].id === id) index = i;
 		}
 
 		return index;
@@ -101,19 +98,19 @@ class WindowManager
 	update ()
 	{
 		//console.log(step);
-		let winShape = this.getWinShape();
+		const winShape = this.getWinShape();
 
 		//console.log(winShape.x, winShape.y);
 
-		if (winShape.x != this.#winData.shape.x ||
-			winShape.y != this.#winData.shape.y ||
-			winShape.w != this.#winData.shape.w ||
-			winShape.h != this.#winData.shape.h)
+		if (winShape.x !== this.#winData.shape.x ||
+			winShape.y !== this.#winData.shape.y ||
+			winShape.w !== this.#winData.shape.w ||
+			winShape.h !== this.#winData.shape.h)
 		{
 			
 			this.#winData.shape = winShape;
 
-			let index = this.getWindowIndexFromId(this.#id);
+			const index = this.getWindowIndexFromId(this.#id);
 			this.#windows[index].shape = winShape;
 
 			//console.log(windows);
